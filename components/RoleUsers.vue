@@ -110,7 +110,7 @@ const selectedTab = ref(0)
           <UInput v-model="q" placeholder="Filter people..." />
           <UButton label="Remove Role from Users" color="red" v-if="selected.length" />
       </div>
-      <UButton label="Add Role to User" color="green" @click="isOpen = true" />
+      <UButton label="Add User to Role" color="green" @click="isOpen = true" />
     </div>
 
     <UTable v-model="selected" :rows="filteredRows" :columns="columns">
