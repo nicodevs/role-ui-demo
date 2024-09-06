@@ -69,6 +69,10 @@ const filteredRows = computed(() => {
   })
 })
 
+const isEditOpen = ref(false)
+const roleName = ref('Credit 1')
+const roleDescription = ref('Super cool role')
+
 const isOpen = ref(false)
 
 const modalSelected = ref([])
@@ -94,7 +98,29 @@ const selectedTab = ref(0)
 <template>
   <div class="p-16">
 
-    <h1 class="text-3xl font-bold mb-4">Credit 1</h1>
+    <UModal v-model="isEditOpen">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+            Edit Role "Credit 1"
+            </template>
+                <UInput
+                    v-model="roleName"
+                    placeholder="Role name"
+                    class="mb-4"
+                />
+
+                <UTextarea v-model="roleDescription" />
+
+                <template #footer>
+                    <UButton label="Save" color="green" @click="isEditOpen = false" />
+                </template>
+            </UCard>
+    </UModal>
+
+    <div class="flex gap-2 items-center mb-4">
+        <h1 class="text-3xl font-bold">{{ roleName }}</h1>
+        <UButton icon="i-heroicons-pencil-square" variant="ghost" color="gray" @click="isEditOpen = true" />
+    </div>
 
     <div>
         <UTabs :items="tabs" @change="onTabChange" />
@@ -102,40 +128,45 @@ const selectedTab = ref(0)
 
     <div v-if="selectedTab === 0">
         <Perms />
+
+
     </div>
 
     <div v-if="selectedTab === 1">
         <div class="flex justify-between px-3 py-3.5 border-b border-gray-200 dark:border-gray-700">
-      <div class="flex gap-2">
-          <UInput v-model="q" placeholder="Filter people..." />
-          <UButton label="Remove Role from Users" color="red" v-if="selected.length" />
-      </div>
-      <UButton label="Add User to Role" color="green" @click="isOpen = true" />
-    </div>
+        <div class="flex gap-2">
+            <UInput v-model="q" placeholder="Filter people..." />
+            <UButton label="Remove Role from Users" color="red" v-if="selected.length" />
+        </div>
+        <UButton label="Add User to Role" color="green" @click="isOpen = true" />
+        </div>
 
-    <UTable v-model="selected" :rows="filteredRows" :columns="columns">
-        <template #actions-data="{ row }">
-            <UButton label="Remove Role" color="red" />
-        </template>
-    </UTable>
-
-    <UModal v-model="isOpen">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-            Add User to Rol
+        <UTable v-model="selected" :rows="filteredRows" :columns="columns">
+            <template #actions-data="{ row }">
+                <UButton label="Remove Role" color="red" />
             </template>
-                <UInputMenu
-                    v-model="modalSelected"
-                    v-model:query="modalQuery"
-                    :options=" modalPeople"
-                    placeholder="Select a person"
-                />
+        </UTable>
 
-                <template #footer>
-                    <UButton label="Add" color="green" />
+        <UModal v-model="isOpen">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                Add User to Rol
                 </template>
-            </UCard>
-    </UModal>
+                <USelectMenu v-model="modalSelected" :options="modalPeople" multiple>
+                    <template #label>
+                    <span v-if="modalSelected.length" class="truncate">{{ modalSelected.join(', ') }}</span>
+                    <span v-else>Select people</span>
+                    </template>
+                </USelectMenu>
+
+
+
+
+                    <template #footer>
+                        <UButton label="Add" color="green" @click="isOpen = false" />
+                    </template>
+                </UCard>
+        </UModal>
     </div>
 
   </div>
